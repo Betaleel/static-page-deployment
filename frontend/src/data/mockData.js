@@ -234,10 +234,10 @@ export const liveStreamInfo = {
 
 export const givingInfo = {
   bankInfo: {
-    bankName: "Banca Transilvania",
+    bankName: "BRD",
     accountHolder: "Biserica Creștină Casa Pâinii",
-    iban: "RO49 AAAA 1B31 0073 0000 0000",
-    bic: "BTRLRO22",
+    iban: "RO24BRDE010SV42968800100",
+    bic: "BRDEROBU",
     details: "Pentru donații, vă rugăm să menționați 'Donație' în descriere."
   },
   onlineOptions: [
