@@ -8,6 +8,7 @@ export default function Header({ title, showBack = false, transparent = false })
   const navigate = useNavigate();
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const { isDark, toggleTheme } = useTheme();
 
   return (
     <header
@@ -28,7 +29,7 @@ export default function Header({ title, showBack = false, transparent = false })
             </button>
           ) : (
             <div className="flex items-center">
-              <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center mr-2">
+              <div className="w-8 h-8 bg-violet-600 rounded-lg flex items-center justify-center mr-2">
                 <span className="text-white font-bold text-sm">R</span>
               </div>
               <span className="font-semibold text-lg">{isHome ? churchInfo.name : ''}</span>
@@ -40,9 +41,18 @@ export default function Header({ title, showBack = false, transparent = false })
           {!isHome && title}
         </h1>
 
-        <button className="p-2 -mr-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-          <Bell className="w-5 h-5" />
-        </button>
+        <div className="flex items-center space-x-1">
+          <button 
+            onClick={toggleTheme}
+            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            aria-label="Toggle theme"
+          >
+            {isDark ? <Sun className="w-5 h-5 text-yellow-500" /> : <Moon className="w-5 h-5 text-gray-600" />}
+          </button>
+          <button className="p-2 -mr-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            <Bell className="w-5 h-5" />
+          </button>
+        </div>
       </div>
     </header>
   );
