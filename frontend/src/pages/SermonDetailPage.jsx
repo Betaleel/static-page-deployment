@@ -1,16 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import PageContainer from '@/components/layout/PageContainer';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Play, Share2, BookOpen, User, Calendar, Clock, ExternalLink } from 'lucide-react';
-import { sermons } from '@/data/mockData';
+import { Play, Share2, BookOpen, User, Calendar, Clock, ExternalLink, Loader2 } from 'lucide-react';
+import { sermons as fallbackSermons } from '@/data/mockData';
+import { fetchVideosFromYouTube } from '@/services/youtubeService';
 
 export default function SermonDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const sermon = sermons.find(s => s.id === parseInt(id));
+  const [sermon, setSermon] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadSermon() {
+      try {
+        const videos = await fetchVideosFromYouTube();
+        const allSermons = videos && videos.length > 0 ? videos : fallbackSermons;
+        const found = allSermons.find(s => s.id === parseInt(id));
+        setSermon(found);
+      } catch (error) {
+        console.error('Failed to fetch sermon:', error);
+        const found = fallbackSermons.find(s => s.id === parseInt(id));
+        setSermon(found);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadSermon();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <PageContainer title="Predică" showBack>
+        <div className="py-12 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+        </div>
+      </PageContainer>
+    );
+  }
 
   if (!sermon) {
     return (
