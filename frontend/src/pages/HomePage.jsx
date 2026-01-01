@@ -81,19 +81,19 @@ export default function HomePage() {
             {nextService && !liveStreamInfo.isLive && (
               <div className="flex items-center space-x-4 mb-4">
                 <div className="text-center">
-                  <span className="text-2xl font-bold">{nextService.days}</span>
-                  <span className="text-xs block text-primary-200">zile</span>
+                  <span className="text-2xl font-bold text-white">{nextService.days}</span>
+                  <span className="text-xs block text-purple-200">zile</span>
                 </div>
-                <span className="text-xl">:</span>
+                <span className="text-xl text-white">:</span>
                 <div className="text-center">
-                  <span className="text-2xl font-bold">{nextService.hours}</span>
-                  <span className="text-xs block text-primary-200">ore</span>
+                  <span className="text-2xl font-bold text-white">{nextService.hours}</span>
+                  <span className="text-xs block text-purple-200">ore</span>
                 </div>
               </div>
             )}
             
             <Link to="/live">
-              <Button className="w-full bg-white text-primary-600 hover:bg-primary-50">
+              <Button className="w-full bg-white text-purple-700 hover:bg-purple-50 font-semibold">
                 <Radio className="w-4 h-4 mr-2" />
                 {liveStreamInfo.isLive ? 'Urmărește Live' : 'Vezi Pagina Live'}
               </Button>
