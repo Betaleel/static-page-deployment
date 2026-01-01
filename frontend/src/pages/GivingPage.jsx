@@ -105,8 +105,8 @@ export default function GivingPage() {
           <CardContent className="p-4">
             <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
               Ai întrebări despre donații? Contactează-ne la{' '}
-              <a href="mailto:contact@casapainii.ro" className="text-violet-600 underline">
-                contact@casapainii.ro
+              <a href="mailto:bisericacasapainii@gmail.com" className="text-violet-600 underline">
+                bisericacasapainii@gmail.com
               </a>
             </p>
           </CardContent>
