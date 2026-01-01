@@ -1,7 +1,8 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, Bell } from 'lucide-react';
+import { ChevronLeft, Bell, Sun, Moon } from 'lucide-react';
 import { churchInfo } from '@/data/mockData';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function Header({ title, showBack = false, transparent = false }) {
   const navigate = useNavigate();
