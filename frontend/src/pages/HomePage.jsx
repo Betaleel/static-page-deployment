@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Radio, PlayCircle, Calendar, Heart, ChevronRight, Clock, MapPin } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
@@ -8,7 +8,8 @@ import AnnouncementCard from '@/components/common/AnnouncementCard';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { sermons, events, announcements, liveStreamInfo, churchInfo } from '@/data/mockData';
+import { sermons as fallbackSermons, events, announcements, liveStreamInfo, churchInfo } from '@/data/mockData';
+import { fetchVideosFromYouTube } from '@/services/youtubeService';
 
 const QuickActionButton = ({ icon: Icon, label, to, color }) => (
   <Link to={to} className="flex flex-col items-center">
