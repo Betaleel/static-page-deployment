@@ -1,5 +1,6 @@
 import "@/App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 // Pages
 import HomePage from "@/pages/HomePage";
@@ -20,27 +21,29 @@ import TermsPage from "@/pages/TermsPage";
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/live" element={<LivePage />} />
-          <Route path="/sermons" element={<SermonsPage />} />
-          <Route path="/sermons/:id" element={<SermonDetailPage />} />
-          <Route path="/events" element={<EventsPage />} />
-          <Route path="/events/:id" element={<EventDetailPage />} />
-          <Route path="/giving" element={<GivingPage />} />
-          <Route path="/more" element={<MorePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/leadership" element={<LeadershipPage />} />
-          <Route path="/schedule" element={<SchedulePage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/announcements" element={<AnnouncementsPage />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
-          <Route path="/terms" element={<TermsPage />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <ThemeProvider>
+      <div className="App">
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/live" element={<LivePage />} />
+            <Route path="/sermons" element={<SermonsPage />} />
+            <Route path="/sermons/:id" element={<SermonDetailPage />} />
+            <Route path="/events" element={<EventsPage />} />
+            <Route path="/events/:id" element={<EventDetailPage />} />
+            <Route path="/giving" element={<GivingPage />} />
+            <Route path="/more" element={<MorePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/leadership" element={<LeadershipPage />} />
+            <Route path="/schedule" element={<SchedulePage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/announcements" element={<AnnouncementsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </ThemeProvider>
   );
 }
 
