@@ -12,10 +12,10 @@ import { sermons, events, announcements, liveStreamInfo, churchInfo } from '@/da
 
 const QuickActionButton = ({ icon: Icon, label, to, color }) => (
   <Link to={to} className="flex flex-col items-center">
-    <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${color} mb-2 shadow-sm`}>
+    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${color} mb-2 shadow-md hover:scale-105 transition-transform`}>
       <Icon className="w-7 h-7 text-white" />
     </div>
-    <span className="text-xs font-medium text-gray-600 dark:text-gray-300">{label}</span>
+    <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{label}</span>
   </Link>
 );
 
