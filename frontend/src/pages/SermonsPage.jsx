@@ -1,11 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import SermonCard from '@/components/common/SermonCard';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Search, Filter, X } from 'lucide-react';
-import { sermons } from '@/data/mockData';
+import { Search, Filter, X, Loader2 } from 'lucide-react';
+import { sermons as fallbackSermons } from '@/data/mockData';
+import { fetchVideosFromYouTube } from '@/services/youtubeService';
 import {
   Select,
   SelectContent,
