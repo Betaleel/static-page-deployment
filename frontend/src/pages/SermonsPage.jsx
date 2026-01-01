@@ -23,11 +23,29 @@ import {
 } from '@/components/ui/sheet';
 
 export default function SermonsPage() {
+  const [sermons, setSermons] = useState(fallbackSermons);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSpeaker, setSelectedSpeaker] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedSeries, setSelectedSeries] = useState('all');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  useEffect(() => {
+    async function loadSermons() {
+      try {
+        const videos = await fetchVideosFromYouTube();
+        if (videos && videos.length > 0) {
+          setSermons(videos);
+        }
+      } catch (error) {
+        console.error('Failed to fetch YouTube videos:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadSermons();
+  }, []);
 
   // Get unique values for filters
   const speakers = useMemo(() => [...new Set(sermons.map(s => s.speaker))], []);
