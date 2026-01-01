@@ -2,10 +2,10 @@
 
 export const churchInfo = {
   name: "Biserica Creștină Casa Pâinii",
-  tagline: "O familie vibrantă în Hristos",
+  tagline: "O familie spirituala vibrantă în Hristos",
   address: "Ocna Mureș, Alba, România",
   phone: "+40 258 871 234",
-  email: "contact@casapainii.ro",
+  email: "bisericacasapainii@gmail.com",
   website: "www.casapainii.ro",
   socialMedia: {
     facebook: "https://www.facebook.com/CasaPainii.OcnaMures/",

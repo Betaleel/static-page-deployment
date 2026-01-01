@@ -108,8 +108,7 @@ export default function MorePage() {
         </Card>
 
         <div className="text-center text-sm text-gray-500 dark:text-gray-400 pt-4">
-          <p>Biserica Rhema Iași</p>
-          <p>Versiune 1.0.0</p>
+          <p>Biserica Creștină Casa Pâinii</p>
         </div>
       </div>
     </PageContainer>

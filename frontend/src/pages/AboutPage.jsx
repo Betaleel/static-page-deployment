@@ -84,7 +84,7 @@ export default function AboutPage() {
           </CardHeader>
           <CardContent>
             <p className="text-gray-600 dark:text-gray-300 mb-4">
-              Biserica Rhema a fost fondată în anul 2000 cu o viziune clară: să aducem mesajul Evangheliei în orașul Iași și împrejurimi.
+              Biserica Creștină Casa Pâinii din orasul Ocna Mures a fost fondată în anul 1956* sub numele "Biserica Maranata", care mai apoi in 2016 s-a mutat in noua cladire pe strada Closca nr. 1.
             </p>
             <p className="text-gray-600 dark:text-gray-300 mb-4">
               De-a lungul anilor, am crescut de la un mic grup de credincioși la o comunitate vibrantă de sute de membri care se întâlnesc săptămânal pentru închinare, studiu biblic și părtășie.
