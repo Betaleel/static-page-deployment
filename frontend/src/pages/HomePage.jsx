@@ -33,6 +33,25 @@ const SectionHeader = ({ title, viewAllLink }) => (
 );
 
 export default function HomePage() {
+  const [sermons, setSermons] = useState(fallbackSermons);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadSermons() {
+      try {
+        const videos = await fetchVideosFromYouTube();
+        if (videos && videos.length > 0) {
+          setSermons(videos);
+        }
+      } catch (error) {
+        console.error('Failed to fetch YouTube videos:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadSermons();
+  }, []);
+
   // Get upcoming events (future events sorted by date)
   const upcomingEvents = events
     .filter(e => new Date(e.date) >= new Date())
