@@ -42,7 +42,8 @@ export default function LivePage() {
   const nextService = getNextService();
 
   const handleWatchLive = () => {
-    setIsPlaying(true);
+    // Open YouTube live page in new tab
+    window.open(YOUTUBE_LIVE_URL, '_blank');
   };
 
   const handleShare = () => {
