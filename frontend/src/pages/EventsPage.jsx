@@ -1,17 +1,39 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import EventCard from '@/components/common/EventCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
-import { events } from '@/data/mockData';
+import { Calendar, Loader2 } from 'lucide-react';
+import { getEvents, transformEvent } from '@/services/api';
+import { events as fallbackEvents } from '@/data/mockData';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function EventsPage() {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
 
+  useEffect(() => {
+    async function loadEvents() {
+      try {
+        const data = await getEvents();
+        if (data && data.length > 0) {
+          setEvents(data.map(transformEvent));
+        } else {
+          setEvents(fallbackEvents);
+        }
+      } catch (error) {
+        console.error('Failed to fetch events:', error);
+        setEvents(fallbackEvents);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadEvents();
+  }, []);
+
   // Get unique categories
-  const categories = useMemo(() => ['all', ...new Set(events.map(e => e.category))], []);
+  const categories = useMemo(() => ['all', ...new Set(events.map(e => e.category))], [events]);
 
   // Separate upcoming and past events
   const { upcomingEvents, pastEvents } = useMemo(() => {
@@ -23,13 +45,23 @@ export default function EventsPage() {
       .filter(e => new Date(e.date) < now)
       .sort((a, b) => new Date(b.date) - new Date(a.date));
     return { upcomingEvents: upcoming, pastEvents: past };
-  }, []);
+  }, [events]);
 
   // Filter by category
   const filterByCategory = (eventsList) => {
     if (selectedCategory === 'all') return eventsList;
     return eventsList.filter(e => e.category === selectedCategory);
   };
+
+  if (loading) {
+    return (
+      <PageContainer title="Evenimente" showBack>
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-violet-600" />
+        </div>
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer title="Evenimente" showBack>

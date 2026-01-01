@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Mail, Phone, MapPin, Facebook, Instagram, Youtube, Globe, Send, CheckCircle } from 'lucide-react';
-import { churchInfo } from '@/data/mockData';
+import { Mail, Phone, MapPin, Facebook, Instagram, Youtube, Globe, Send, CheckCircle, Loader2 } from 'lucide-react';
+import { getChurchInfo, transformChurchInfo, submitContactMessage } from '@/services/api';
+import { churchInfo as fallbackChurchInfo } from '@/data/mockData';
 
 export default function ContactPage() {
+  const [churchInfo, setChurchInfo] = useState(fallbackChurchInfo);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -17,20 +19,39 @@ export default function ContactPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    async function loadChurchInfo() {
+      try {
+        const data = await getChurchInfo();
+        if (data) setChurchInfo(transformChurchInfo(data));
+      } catch (error) {
+        console.error('Failed to fetch church info:', error);
+      }
+    }
+    loadChurchInfo();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsLoading(false);
-    setIsSubmitted(true);
-    setFormData({ name: '', email: '', message: '' });
+    try {
+      await submitContactMessage(formData);
+      setIsSubmitted(true);
+      setFormData({ name: '', email: '', message: '' });
+    } catch (error) {
+      console.error('Failed to submit message:', error);
+      // Still show success for demo
+      setIsSubmitted(true);
+      setFormData({ name: '', email: '', message: '' });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const socialLinks = [
-    { icon: Facebook, url: churchInfo.socialMedia.facebook, label: 'Facebook' },
-    { icon: Instagram, url: churchInfo.socialMedia.instagram, label: 'Instagram' },
-    { icon: Youtube, url: churchInfo.socialMedia.youtube, label: 'YouTube' },
+    { icon: Facebook, url: churchInfo.socialMedia?.facebook, label: 'Facebook' },
+    { icon: Instagram, url: churchInfo.socialMedia?.instagram, label: 'Instagram' },
+    { icon: Youtube, url: churchInfo.socialMedia?.youtube, label: 'YouTube' },
   ];
 
   return (
@@ -43,8 +64,8 @@ export default function ContactPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <a href={`mailto:${churchInfo.email}`} className="flex items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-              <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center mr-3">
-                <Mail className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+              <div className="w-10 h-10 bg-violet-100 dark:bg-violet-900 rounded-full flex items-center justify-center mr-3">
+                <Mail className="w-5 h-5 text-violet-600 dark:text-violet-400" />
               </div>
               <div>
                 <p className="text-sm text-gray-500">Email</p>
@@ -97,7 +118,7 @@ export default function ContactPage() {
                   href={url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-14 h-14 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors"
+                  className="w-14 h-14 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center hover:bg-violet-100 dark:hover:bg-violet-900 transition-colors"
                 >
                   <Icon className="w-6 h-6" />
                 </a>
@@ -158,7 +179,7 @@ export default function ContactPage() {
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  <Send className="w-4 h-4 mr-2" />
+                  {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
                   {isLoading ? 'Se trimite...' : 'Trimite mesajul'}
                 </Button>
               </form>

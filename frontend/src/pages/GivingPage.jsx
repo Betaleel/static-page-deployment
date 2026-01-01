@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Heart, CreditCard, Building, Repeat, Copy, Check, ExternalLink } from 'lucide-react';
-import { givingInfo } from '@/data/mockData';
+import { Heart, CreditCard, Building, Repeat, Copy, Check, ExternalLink, Loader2 } from 'lucide-react';
+import { getGivingInfo, transformGivingInfo } from '@/services/api';
+import { givingInfo as fallbackGivingInfo } from '@/data/mockData';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Select,
@@ -22,9 +23,25 @@ const iconMap = {
 };
 
 export default function GivingPage() {
+  const [givingInfo, setGivingInfo] = useState(fallbackGivingInfo);
+  const [loading, setLoading] = useState(true);
   const [amount, setAmount] = useState('');
   const [copied, setCopied] = useState(false);
   const [donationType, setDonationType] = useState('oneTime');
+
+  useEffect(() => {
+    async function loadGivingInfo() {
+      try {
+        const data = await getGivingInfo();
+        if (data) setGivingInfo(transformGivingInfo(data));
+      } catch (error) {
+        console.error('Failed to fetch giving info:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadGivingInfo();
+  }, []);
 
   const handleCopyIban = () => {
     navigator.clipboard.writeText(givingInfo.bankInfo.iban);
@@ -34,16 +51,26 @@ export default function GivingPage() {
 
   const quickAmounts = [50, 100, 200, 500];
 
+  if (loading) {
+    return (
+      <PageContainer title="Dăruiește" showBack>
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-violet-600" />
+        </div>
+      </PageContainer>
+    );
+  }
+
   return (
     <PageContainer title="Dăruiește" showBack>
       <div className="py-4 space-y-6">
         {/* Verse */}
-        <Card className="bg-gradient-to-br from-primary-600 to-primary-800 text-white border-0">
+        <Card className="bg-gradient-to-br from-violet-600 to-purple-800 text-white border-0">
           <CardContent className="p-5">
             <div className="flex items-start">
               <Heart className="w-8 h-8 mr-3 flex-shrink-0" fill="white" />
               <div>
-                <p className="text-primary-100 italic mb-2">"{givingInfo.verse.text}"</p>
+                <p className="text-purple-100 italic mb-2">"{givingInfo.verse.text}"</p>
                 <p className="text-sm font-semibold">{givingInfo.verse.reference}</p>
               </div>
             </div>
@@ -60,7 +87,7 @@ export default function GivingPage() {
             {/* Donation Form */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Faă o donație</CardTitle>
+                <CardTitle className="text-lg">Fă o donație</CardTitle>
                 <CardDescription>Alege suma și metoda de plată</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -135,7 +162,7 @@ export default function GivingPage() {
                 </Button>
 
                 <p className="text-xs text-center text-gray-500">
-                  Plata este securizată și procesată prin Stripe
+                  Plata este securizată și procesată prin Stripe (MOCK)
                 </p>
               </CardContent>
             </Card>
@@ -177,8 +204,8 @@ export default function GivingPage() {
                   </div>
                 </div>
 
-                <div className="bg-primary-50 dark:bg-primary-900/20 p-4 rounded-lg">
-                  <p className="text-sm text-primary-700 dark:text-primary-300">
+                <div className="bg-violet-50 dark:bg-violet-900/20 p-4 rounded-lg">
+                  <p className="text-sm text-violet-700 dark:text-violet-300">
                     {givingInfo.bankInfo.details}
                   </p>
                 </div>
@@ -197,8 +224,8 @@ export default function GivingPage() {
               const Icon = iconMap[option.icon] || Heart;
               return (
                 <div key={index} className="flex items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center mr-3">
-                    <Icon className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                  <div className="w-10 h-10 bg-violet-100 dark:bg-violet-900 rounded-full flex items-center justify-center mr-3">
+                    <Icon className="w-5 h-5 text-violet-600 dark:text-violet-400" />
                   </div>
                   <div>
                     <p className="font-medium text-sm">{option.name}</p>
@@ -207,15 +234,6 @@ export default function GivingPage() {
                 </div>
               );
             })}
-          </CardContent>
-        </Card>
-
-        {/* FAQ */}
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
-              Ai întrebări despre donații? Contactează-ne la <a href="mailto:contact@bisericarhema.ro" className="text-primary-600 underline">contact@bisericarhema.ro</a>
-            </p>
           </CardContent>
         </Card>
       </div>

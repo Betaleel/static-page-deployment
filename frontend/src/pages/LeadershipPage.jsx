@@ -1,9 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import { Card, CardContent } from '@/components/ui/card';
-import { leadership } from '@/data/mockData';
+import { Loader2 } from 'lucide-react';
+import { getLeadership, transformLeader } from '@/services/api';
+import { leadership as fallbackLeadership } from '@/data/mockData';
 
 export default function LeadershipPage() {
+  const [leadership, setLeadership] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadLeadership() {
+      try {
+        const data = await getLeadership();
+        if (data && data.length > 0) {
+          setLeadership(data.map(transformLeader));
+        } else {
+          setLeadership(fallbackLeadership);
+        }
+      } catch (error) {
+        console.error('Failed to fetch leadership:', error);
+        setLeadership(fallbackLeadership);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadLeadership();
+  }, []);
+
+  if (loading) {
+    return (
+      <PageContainer title="Echipa de Conducere" showBack>
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-violet-600" />
+        </div>
+      </PageContainer>
+    );
+  }
+
   return (
     <PageContainer title="Echipa de Conducere" showBack>
       <div className="py-4 space-y-4">
@@ -22,7 +56,7 @@ export default function LeadershipPage() {
                 />
                 <div className="flex-1">
                   <h3 className="font-semibold text-lg">{leader.name}</h3>
-                  <p className="text-primary-600 dark:text-primary-400 text-sm mb-2">{leader.role}</p>
+                  <p className="text-violet-600 dark:text-violet-400 text-sm mb-2">{leader.role}</p>
                   <p className="text-gray-600 dark:text-gray-300 text-sm">{leader.bio}</p>
                 </div>
               </div>
