@@ -5,8 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Search, Filter, X, Loader2 } from 'lucide-react';
+import { getSermons, transformSermon } from '@/services/api';
 import { sermons as fallbackSermons } from '@/data/mockData';
-import { fetchVideosFromYouTube } from '@/services/youtubeService';
 import {
   Select,
   SelectContent,
@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/sheet';
 
 export default function SermonsPage() {
-  const [sermons, setSermons] = useState(fallbackSermons);
+  const [sermons, setSermons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSpeaker, setSelectedSpeaker] = useState('all');
@@ -34,12 +34,15 @@ export default function SermonsPage() {
   useEffect(() => {
     async function loadSermons() {
       try {
-        const videos = await fetchVideosFromYouTube();
-        if (videos && videos.length > 0) {
-          setSermons(videos);
+        const data = await getSermons({ limit: 50 });
+        if (data && data.length > 0) {
+          setSermons(data.map(transformSermon));
+        } else {
+          setSermons(fallbackSermons);
         }
       } catch (error) {
-        console.error('Failed to fetch YouTube videos:', error);
+        console.error('Failed to fetch sermons:', error);
+        setSermons(fallbackSermons);
       } finally {
         setLoading(false);
       }
@@ -48,9 +51,9 @@ export default function SermonsPage() {
   }, []);
 
   // Get unique values for filters
-  const speakers = useMemo(() => [...new Set(sermons.map(s => s.speaker))], []);
-  const categories = useMemo(() => [...new Set(sermons.map(s => s.category))], []);
-  const series = useMemo(() => [...new Set(sermons.map(s => s.series).filter(Boolean))], []);
+  const speakers = useMemo(() => [...new Set(sermons.map(s => s.speaker))], [sermons]);
+  const categories = useMemo(() => [...new Set(sermons.map(s => s.category))], [sermons]);
+  const series = useMemo(() => [...new Set(sermons.map(s => s.series).filter(Boolean))], [sermons]);
 
   // Filter sermons
   const filteredSermons = useMemo(() => {
@@ -58,7 +61,7 @@ export default function SermonsPage() {
       const matchesSearch = searchQuery === '' || 
         sermon.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         sermon.speaker.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        sermon.description.toLowerCase().includes(searchQuery.toLowerCase());
+        (sermon.description && sermon.description.toLowerCase().includes(searchQuery.toLowerCase()));
       
       const matchesSpeaker = selectedSpeaker === 'all' || sermon.speaker === selectedSpeaker;
       const matchesCategory = selectedCategory === 'all' || sermon.category === selectedCategory;
@@ -66,7 +69,7 @@ export default function SermonsPage() {
 
       return matchesSearch && matchesSpeaker && matchesCategory && matchesSeries;
     });
-  }, [searchQuery, selectedSpeaker, selectedCategory, selectedSeries]);
+  }, [sermons, searchQuery, selectedSpeaker, selectedCategory, selectedSeries]);
 
   const activeFiltersCount = [selectedSpeaker, selectedCategory, selectedSeries].filter(f => f !== 'all').length;
 
@@ -75,6 +78,16 @@ export default function SermonsPage() {
     setSelectedCategory('all');
     setSelectedSeries('all');
   };
+
+  if (loading) {
+    return (
+      <PageContainer title="Predici" showBack>
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-violet-600" />
+        </div>
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer title="Predici" showBack>
@@ -95,7 +108,7 @@ export default function SermonsPage() {
               <Button variant="outline" className="relative">
                 <Filter className="w-4 h-4" />
                 {activeFiltersCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary-600 text-white text-xs rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-violet-600 text-white text-xs rounded-full flex items-center justify-center">
                     {activeFiltersCount}
                   </span>
                 )}
