@@ -147,7 +147,7 @@ export default function LivePage() {
                 Distribuie
               </Button>
               <Button asChild className="flex-1">
-                <a href={churchInfo.socialMedia.youtube} target="_blank" rel="noopener noreferrer">
+                <a href={YOUTUBE_CHANNEL_URL} target="_blank" rel="noopener noreferrer">
                   <ExternalLink className="w-4 h-4 mr-2" />
                   YouTube
                 </a>
