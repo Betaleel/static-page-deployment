@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Radio, PlayCircle, Calendar, Heart, ChevronRight, Clock, MapPin } from 'lucide-react';
+import { Radio, PlayCircle, Calendar, Heart, ChevronRight, Clock, MapPin, Loader2 } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
 import SermonCard from '@/components/common/SermonCard';
 import EventCard from '@/components/common/EventCard';
@@ -8,8 +8,11 @@ import AnnouncementCard from '@/components/common/AnnouncementCard';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { sermons as fallbackSermons, events, announcements, liveStreamInfo, churchInfo } from '@/data/mockData';
-import { fetchVideosFromYouTube } from '@/services/youtubeService';
+import { 
+  getSermons, getEvents, getAnnouncements, getLiveStreamInfo, getChurchInfo,
+  transformSermon, transformEvent, transformAnnouncement, transformLiveStream, transformChurchInfo
+} from '@/services/api';
+import { sermons as fallbackSermons, events as fallbackEvents, announcements as fallbackAnnouncements, liveStreamInfo as fallbackLiveStream, churchInfo as fallbackChurchInfo } from '@/data/mockData';
 
 const QuickActionButton = ({ icon: Icon, label, to, color }) => (
   <Link to={to} className="flex flex-col items-center">
@@ -24,7 +27,7 @@ const SectionHeader = ({ title, viewAllLink }) => (
   <div className="flex items-center justify-between mb-4">
     <h2 className="text-lg font-bold text-gray-900 dark:text-white">{title}</h2>
     {viewAllLink && (
-      <Link to={viewAllLink} className="text-primary-600 dark:text-primary-400 text-sm font-medium flex items-center">
+      <Link to={viewAllLink} className="text-violet-600 dark:text-violet-400 text-sm font-medium flex items-center">
         Vezi toate
         <ChevronRight className="w-4 h-4 ml-1" />
       </Link>
@@ -33,23 +36,47 @@ const SectionHeader = ({ title, viewAllLink }) => (
 );
 
 export default function HomePage() {
-  const [sermons, setSermons] = useState(fallbackSermons);
+  const [sermons, setSermons] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
+  const [liveStreamInfo, setLiveStreamInfo] = useState(fallbackLiveStream);
+  const [churchInfo, setChurchInfo] = useState(fallbackChurchInfo);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadSermons() {
+    async function loadData() {
       try {
-        const videos = await fetchVideosFromYouTube();
-        if (videos && videos.length > 0) {
-          setSermons(videos);
-        }
+        const [sermonsData, eventsData, announcementsData, liveData, churchData] = await Promise.all([
+          getSermons({ limit: 10 }).catch(() => null),
+          getEvents().catch(() => null),
+          getAnnouncements(5).catch(() => null),
+          getLiveStreamInfo().catch(() => null),
+          getChurchInfo().catch(() => null)
+        ]);
+
+        if (sermonsData) setSermons(sermonsData.map(transformSermon));
+        else setSermons(fallbackSermons);
+
+        if (eventsData) setEvents(eventsData.map(transformEvent));
+        else setEvents(fallbackEvents);
+
+        if (announcementsData) setAnnouncements(announcementsData.map(transformAnnouncement));
+        else setAnnouncements(fallbackAnnouncements);
+
+        if (liveData) setLiveStreamInfo(transformLiveStream(liveData));
+        
+        if (churchData) setChurchInfo(transformChurchInfo(churchData));
+
       } catch (error) {
-        console.error('Failed to fetch YouTube videos:', error);
+        console.error('Failed to load data:', error);
+        setSermons(fallbackSermons);
+        setEvents(fallbackEvents);
+        setAnnouncements(fallbackAnnouncements);
       } finally {
         setLoading(false);
       }
     }
-    loadSermons();
+    loadData();
   }, []);
 
   // Get upcoming events (future events sorted by date)
@@ -78,6 +105,16 @@ export default function HomePage() {
   };
 
   const nextService = getNextService();
+
+  if (loading) {
+    return (
+      <PageContainer title="Acasă">
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-violet-600" />
+        </div>
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer title="Acasă">
@@ -140,8 +177,8 @@ export default function HomePage() {
             {churchInfo.serviceTimes.map((service, index) => (
               <div key={index} className={`flex items-center justify-between ${index > 0 ? 'pt-3' : ''} ${index < churchInfo.serviceTimes.length - 1 ? 'pb-3' : ''}`}>
                 <div className="flex items-center">
-                  <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900 rounded-lg flex items-center justify-center mr-3">
-                    <Clock className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                  <div className="w-10 h-10 bg-violet-100 dark:bg-violet-900 rounded-lg flex items-center justify-center mr-3">
+                    <Clock className="w-5 h-5 text-violet-600 dark:text-violet-400" />
                   </div>
                   <div>
                     <p className="font-medium text-sm">{service.name}</p>
@@ -172,9 +209,17 @@ export default function HomePage() {
       <section className="mb-8">
         <SectionHeader title="Evenimente Următoare" viewAllLink="/events" />
         <div className="space-y-3">
-          {upcomingEvents.map(event => (
-            <EventCard key={event.id} event={event} compact />
-          ))}
+          {upcomingEvents.length > 0 ? (
+            upcomingEvents.map(event => (
+              <EventCard key={event.id} event={event} compact />
+            ))
+          ) : (
+            <Card>
+              <CardContent className="p-4 text-center text-gray-500">
+                Nu există evenimente programate.
+              </CardContent>
+            </Card>
+          )}
         </div>
       </section>
 
