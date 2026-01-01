@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Radio, Clock, Calendar, ExternalLink, Share2 } from 'lucide-react';
 import { liveStreamInfo, churchInfo } from '@/data/mockData';
+import { YOUTUBE_CHANNEL_URL, YOUTUBE_LIVE_URL } from '@/services/youtubeService';
 
 export default function LivePage() {
   const [isPlaying, setIsPlaying] = useState(false);
