@@ -76,7 +76,7 @@ export default function SermonDetailPage() {
         {/* Video Player */}
         <div className="relative aspect-video bg-gray-900">
           <iframe
-            src={`https://www.youtube.com/embed/${sermon.videoUrl.split('v=')[1]}`}
+            src={`https://www.youtube.com/embed/${sermon.videoId || sermon.videoUrl?.split('v=')[1]}`}
             title={sermon.title}
             className="w-full h-full"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
