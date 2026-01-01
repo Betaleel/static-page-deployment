@@ -105,10 +105,10 @@ export default function HomePage() {
       {/* Quick Actions */}
       <section className="mb-8">
         <div className="flex justify-around">
-          <QuickActionButton icon={Radio} label="Live" to="/live" color="bg-red-500" />
-          <QuickActionButton icon={PlayCircle} label="Predici" to="/sermons" color="bg-primary-600" />
-          <QuickActionButton icon={Calendar} label="Evenimente" to="/events" color="bg-green-500" />
-          <QuickActionButton icon={Heart} label="Dăruiește" to="/giving" color="bg-pink-500" />
+          <QuickActionButton icon={Radio} label="Live" to="/live" color="bg-gradient-to-br from-red-500 to-rose-600" />
+          <QuickActionButton icon={PlayCircle} label="Predici" to="/sermons" color="bg-gradient-to-br from-violet-500 to-purple-600" />
+          <QuickActionButton icon={Calendar} label="Evenimente" to="/events" color="bg-gradient-to-br from-emerald-500 to-green-600" />
+          <QuickActionButton icon={Heart} label="Dăruiește" to="/giving" color="bg-gradient-to-br from-pink-500 to-rose-500" />
         </div>
       </section>
 
