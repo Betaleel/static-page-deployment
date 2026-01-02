@@ -29,8 +29,8 @@ export default function Header({ title, showBack = false, transparent = false })
             </button>
           ) : (
             <div className="flex items-center">
-              <div className="w-8 h-8 bg-violet-600 rounded-lg flex items-center justify-center mr-2">
-                <span className="text-white font-bold text-sm">R</span>
+              <div className="w-15 h-8 bg-violet-600 rounded-lg flex items-center justify-center mr-2">
+                <div className="casa-painii-logo"/>
               </div>
               <span className="font-semibold text-lg">{isHome ? churchInfo.name : ''}</span>
             </div>
@@ -38,7 +38,7 @@ export default function Header({ title, showBack = false, transparent = false })
         </div>
         
         <h1 className="absolute left-1/2 -translate-x-1/2 font-semibold text-lg truncate max-w-[200px]">
-          {!isHome && title}
+            {!isHome && title}
         </h1>
 
         <div className="flex items-center space-x-1">
