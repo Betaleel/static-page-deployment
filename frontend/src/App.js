@@ -1,5 +1,5 @@
 import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/context/ThemeContext";
 
 // Pages
@@ -23,7 +23,7 @@ function App() {
   return (
     <ThemeProvider>
       <div className="App">
-        <BrowserRouter>
+        <HashRouter>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/live" element={<LivePage />} />
@@ -41,7 +41,7 @@ function App() {
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
           </Routes>
-        </BrowserRouter>
+        </HashRouter>
       </div>
     </ThemeProvider>
   );
